@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { 
-  ChevronRight, Home as HomeIcon, Printer, Share2, Menu as MenuIcon, ChevronDown, FileText
+  ChevronRight, Home as HomeIcon, Printer, Share2, Menu as MenuIcon, ChevronDown, FileText, FolderOpen
 } from 'lucide-react';
 import { MAIN_MENU } from '../constants';
 
@@ -16,11 +16,13 @@ const GenericPage: React.FC = () => {
 
   const currentPath = location.pathname;
   
+  // 1. Ищем, к какому разделу относится текущая страница
   const parentSection = MAIN_MENU.find(item => 
     item.href === currentPath || 
     (item.submenu && item.submenu.some(sub => sub.href === currentPath))
   );
 
+  // 2. Определяем заголовок
   let pageTitle = 'Страница';
   if (parentSection) {
     if (parentSection.href === currentPath) {
@@ -36,6 +38,9 @@ const GenericPage: React.FC = () => {
 
   const sidebarLinks = parentSection?.submenu || [];
   const hasSidebar = sidebarLinks.length > 0;
+  
+  // 3. Проверяем: мы на главной странице раздела или внутри?
+  const isSectionRoot = parentSection && parentSection.href === currentPath;
 
   return (
     <div className="bg-slate-50 min-h-screen pb-20 font-sans">
@@ -43,7 +48,6 @@ const GenericPage: React.FC = () => {
       {/* Header Block */}
       <div className="bg-primary-900 text-white pt-10 pb-20 md:pt-14 md:pb-24 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-96 bg-accent-500/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none"></div>
-        {/* CONTAINER UPDATED */}
         <div className="w-full max-w-[1600px] mx-auto px-4 md:px-8 relative z-10">
           
           <nav className="flex flex-wrap items-center gap-2 text-sm text-slate-300 mb-6 font-medium">
@@ -51,7 +55,7 @@ const GenericPage: React.FC = () => {
               <HomeIcon className="w-4 h-4" />
             </Link>
             <ChevronRight className="w-3 h-3 opacity-40" />
-            {parentSection && parentSection.href !== currentPath ? (
+            {parentSection && !isSectionRoot ? (
               <>
                 <Link to={parentSection.href || '#'} className="hover:text-white transition-colors">{parentSection.label}</Link>
                 <ChevronRight className="w-3 h-3 opacity-40" />
@@ -68,13 +72,12 @@ const GenericPage: React.FC = () => {
       </div>
 
       {/* Main Content */}
-      {/* CONTAINER UPDATED */}
       <div className="w-full max-w-[1600px] mx-auto px-4 md:px-8 -mt-10 md:-mt-16 relative z-20">
         
-        {/* LAYOUT UPDATED: Flex */}
         <div className="flex flex-col lg:flex-row gap-8 items-start">
           
-          {hasSidebar && (
+          {/* SIDEBAR: Показываем только если мы НЕ на главной странице раздела (или на моб.) */}
+          {hasSidebar && !isSectionRoot && (
             <aside className="w-full lg:w-[320px] flex-shrink-0 order-1">
               
               <div className="lg:hidden mb-4">
@@ -119,11 +122,14 @@ const GenericPage: React.FC = () => {
             </aside>
           )}
 
+          {/* CONTENT */}
           <main className="flex-1 w-full order-2">
             <div className="bg-white rounded-xl shadow-xl p-8 md:p-12 border border-slate-100 min-h-[60vh]">
               
               <div className="flex justify-between items-center mb-8 pb-4 border-b border-slate-100">
-                <div className="text-sm text-slate-400">Обновлено: 29.12.2025</div>
+                <div className="text-sm text-slate-400">
+                   {isSectionRoot ? 'Выберите раздел' : 'Обновлено: 29.12.2025'}
+                </div>
                 <div className="flex gap-4">
                   <button className="flex items-center text-sm text-slate-500 hover:text-primary-900 transition-colors gap-1.5 group">
                     <Printer className="w-4 h-4 group-hover:scale-110 transition-transform" /> <span className="hidden sm:inline">Распечатать</span>
@@ -134,20 +140,51 @@ const GenericPage: React.FC = () => {
                 </div>
               </div>
 
-              <div className="prose prose-slate prose-lg max-w-none prose-headings:font-display prose-headings:font-bold prose-h2:text-primary-900 prose-a:text-accent-600 prose-a:no-underline hover:prose-a:underline">
-                <p className="lead">Добро пожаловать в раздел <span className="text-primary-900">«{pageTitle}»</span>. Здесь представлена актуальная информация.</p>
-                
-                <div className="not-prose my-8 p-6 bg-blue-50 rounded-xl border-l-4 border-blue-500 flex flex-col sm:flex-row items-start gap-4">
-                  <div className="bg-white p-2 rounded-full shadow-sm flex-shrink-0"><FileText className="w-6 h-6 text-blue-600" /></div>
-                  <div>
-                    <h3 className="text-blue-900 font-bold text-lg mb-1">Информация обновляется</h3>
-                    <p className="text-sm text-blue-800/80 leading-relaxed">В данный момент страница наполняется материалами к новому учебному году.</p>
-                  </div>
+              {isSectionRoot && hasSidebar ? (
+                <div>
+                   <p className="text-lg text-slate-600 mb-8">
+                     Добро пожаловать в раздел <span className="font-bold text-primary-900">{pageTitle}</span>. 
+                     Пожалуйста, выберите интересующий вас подраздел:
+                   </p>
+                   
+                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {sidebarLinks.map((link) => (
+                        <Link 
+                           key={link.href} 
+                           to={link.href}
+                           className="group p-6 border border-slate-200 rounded-xl hover:shadow-lg hover:border-accent-500 transition-all duration-300 bg-slate-50 hover:bg-white flex flex-col items-start"
+                        >
+                           <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm mb-4 group-hover:scale-110 transition-transform text-accent-500">
+                              <FolderOpen className="w-6 h-6" />
+                           </div>
+                           <h3 className="font-bold text-lg text-primary-900 group-hover:text-accent-600 transition-colors mb-2">
+                              {link.label}
+                           </h3>
+                           <span className="text-xs text-slate-400 uppercase font-bold tracking-wider group-hover:text-accent-500 flex items-center">
+                              Перейти <ChevronRight className="w-3 h-3 ml-1" />
+                           </span>
+                        </Link>
+                      ))}
+                   </div>
                 </div>
+              ) : (
+                <div className="prose prose-slate prose-lg max-w-none prose-headings:font-display prose-headings:font-bold prose-h2:text-primary-900 prose-a:text-accent-600 prose-a:no-underline hover:prose-a:underline">
+                  <p className="lead">Добро пожаловать в раздел <span className="text-primary-900">«{pageTitle}»</span>. Здесь представлена актуальная информация.</p>
+                  
+                  <div className="not-prose my-8 p-6 bg-blue-50 rounded-xl border-l-4 border-blue-500 flex flex-col sm:flex-row items-start gap-4">
+                    <div className="bg-white p-2 rounded-full shadow-sm flex-shrink-0"><FileText className="w-6 h-6 text-blue-600" /></div>
+                    <div>
+                      <h3 className="text-blue-900 font-bold text-lg mb-1">Информация обновляется</h3>
+                      <p className="text-sm text-blue-800/80 leading-relaxed">В данный момент страница наполняется материалами к новому учебному году.</p>
+                    </div>
+                  </div>
 
-                <h2>Общая информация</h2>
-                <p>Пинский государственный аграрно-технический колледж имени А.Е. Клещева обеспечивает подготовку специалистов высокого уровня.</p>
-              </div>
+                  <h2>Общая информация</h2>
+                  <p>Пинский государственный аграрно-технический колледж имени А.Е. Клещева обеспечивает подготовку специалистов высокого уровня.</p>
+                  <p>Мы гордимся нашими выпускниками и преподавательским составом. Образовательный процесс строится на использовании современных методик и технологий.</p>
+                </div>
+              )}
+
             </div>
           </main>
         </div>
