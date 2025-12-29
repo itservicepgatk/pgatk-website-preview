@@ -16,13 +16,13 @@ const GenericPage: React.FC = () => {
 
   const currentPath = location.pathname;
   
-  // 1. Ищем, к какому разделу относится текущая страница
+
   const parentSection = MAIN_MENU.find(item => 
     item.href === currentPath || 
     (item.submenu && item.submenu.some(sub => sub.href === currentPath))
   );
 
-  // 2. Определяем заголовок
+
   let pageTitle = 'Страница';
   if (parentSection) {
     if (parentSection.href === currentPath) {
@@ -33,14 +33,16 @@ const GenericPage: React.FC = () => {
     }
   } else {
     const slug = currentPath.split('/').pop();
-    pageTitle = slug ? decodeURIComponent(slug).charAt(0).toUpperCase() + decodeURIComponent(slug).slice(1) : 'Информация';
+    if (slug) {
+      pageTitle = decodeURIComponent(slug).charAt(0).toUpperCase() + decodeURIComponent(slug).slice(1);
+    }
   }
 
   const sidebarLinks = parentSection?.submenu || [];
   const hasSidebar = sidebarLinks.length > 0;
   
-  // 3. Проверяем: мы на главной странице раздела или внутри?
-  const isSectionRoot = parentSection && parentSection.href === currentPath;
+
+  const isSectionRoot = parentSection && (parentSection.href === currentPath || parentSection.href === currentPath + '/');
 
   return (
     <div className="bg-slate-50 min-h-screen pb-20 font-sans">
@@ -76,7 +78,7 @@ const GenericPage: React.FC = () => {
         
         <div className="flex flex-col lg:flex-row gap-8 items-start">
           
-          {/* SIDEBAR: Показываем только если мы НЕ на главной странице раздела (или на моб.) */}
+          {/* SIDEBAR: Скрываем на главной странице раздела, чтобы не дублировать */}
           {hasSidebar && !isSectionRoot && (
             <aside className="w-full lg:w-[320px] flex-shrink-0 order-1">
               
@@ -128,7 +130,7 @@ const GenericPage: React.FC = () => {
               
               <div className="flex justify-between items-center mb-8 pb-4 border-b border-slate-100">
                 <div className="text-sm text-slate-400">
-                   {isSectionRoot ? 'Выберите раздел' : 'Обновлено: 29.12.2025'}
+                   {isSectionRoot ? 'Выберите подраздел' : 'Обновлено: 29.12.2025'}
                 </div>
                 <div className="flex gap-4">
                   <button className="flex items-center text-sm text-slate-500 hover:text-primary-900 transition-colors gap-1.5 group">
@@ -140,11 +142,12 @@ const GenericPage: React.FC = () => {
                 </div>
               </div>
 
+              {/* ЛОГИКА ОТОБРАЖЕНИЯ: Если мы в корне раздела -> показываем карточки */}
               {isSectionRoot && hasSidebar ? (
-                <div>
+                <div className="animate-in fade-in duration-500">
                    <p className="text-lg text-slate-600 mb-8">
                      Добро пожаловать в раздел <span className="font-bold text-primary-900">{pageTitle}</span>. 
-                     Пожалуйста, выберите интересующий вас подраздел:
+                     Ниже представлены доступные подразделы:
                    </p>
                    
                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -154,13 +157,13 @@ const GenericPage: React.FC = () => {
                            to={link.href}
                            className="group p-6 border border-slate-200 rounded-xl hover:shadow-lg hover:border-accent-500 transition-all duration-300 bg-slate-50 hover:bg-white flex flex-col items-start"
                         >
-                           <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm mb-4 group-hover:scale-110 transition-transform text-accent-500">
+                           <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm mb-4 group-hover:scale-110 transition-transform text-accent-500 border border-slate-100">
                               <FolderOpen className="w-6 h-6" />
                            </div>
                            <h3 className="font-bold text-lg text-primary-900 group-hover:text-accent-600 transition-colors mb-2">
                               {link.label}
                            </h3>
-                           <span className="text-xs text-slate-400 uppercase font-bold tracking-wider group-hover:text-accent-500 flex items-center">
+                           <span className="text-xs text-slate-400 uppercase font-bold tracking-wider group-hover:text-accent-500 flex items-center mt-auto">
                               Перейти <ChevronRight className="w-3 h-3 ml-1" />
                            </span>
                         </Link>
@@ -169,7 +172,7 @@ const GenericPage: React.FC = () => {
                 </div>
               ) : (
                 <div className="prose prose-slate prose-lg max-w-none prose-headings:font-display prose-headings:font-bold prose-h2:text-primary-900 prose-a:text-accent-600 prose-a:no-underline hover:prose-a:underline">
-                  <p className="lead">Добро пожаловать в раздел <span className="text-primary-900">«{pageTitle}»</span>. Здесь представлена актуальная информация.</p>
+                  <p className="lead">Добро пожаловать в раздел <span className="text-primary-900">«{pageTitle}»</span>.</p>
                   
                   <div className="not-prose my-8 p-6 bg-blue-50 rounded-xl border-l-4 border-blue-500 flex flex-col sm:flex-row items-start gap-4">
                     <div className="bg-white p-2 rounded-full shadow-sm flex-shrink-0"><FileText className="w-6 h-6 text-blue-600" /></div>

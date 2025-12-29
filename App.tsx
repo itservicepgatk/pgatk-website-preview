@@ -6,13 +6,13 @@ import GenericPage from './pages/GenericPage';
 import NewsList from './pages/NewsList';
 import NewsDetail from './pages/NewsDetail';
 import OneWindow from './pages/OneWindow';
-import ServicesPage from './pages/ServicesPage'; // <--- ИМПОРТ
+import ServicesPage from './pages/ServicesPage';
 import { AccessibilityProvider } from './context/AccessibilityContext';
 
 const App: React.FC = () => {
   return (
     <AccessibilityProvider>
-      <BrowserRouter>
+      <BrowserRouter basename={import.meta.env.BASE_URL}>
         <Routes>
           <Route path="/" element={<MainLayout />}>
             <Route index element={<Home />} />
@@ -20,8 +20,6 @@ const App: React.FC = () => {
             <Route path="news/:id" element={<NewsDetail />} />
             
             <Route path="odno-okno" element={<OneWindow />} />
-            
-            {/* НОВЫЙ МАРШРУТ */}
             <Route path="odno-okno/uslugi" element={<ServicesPage />} />
             
             <Route path="*" element={<GenericPage />} />
