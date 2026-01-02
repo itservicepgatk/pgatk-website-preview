@@ -1,6 +1,6 @@
 import React from 'react';
 import { 
-  TreeDeciduous, 
+  Flower2, // Обновил импорт
   Trophy, 
   Scale, 
   FlaskConical, 
@@ -11,7 +11,8 @@ import {
 import { QuickLinkItem } from '../types';
 
 const links: QuickLinkItem[] = [
-  { label: 'Год благоустройства', icon: TreeDeciduous, description: 'Тематика 2025', color: 'bg-emerald-600' },
+  // Обновил первый пункт
+  { label: 'Год женщины', icon: Flower2, description: 'Тематика 2026', color: 'bg-rose-600' },
   { label: 'Акции, конкурсы', icon: Trophy, description: 'Наши победы', color: 'bg-amber-500' },
   { label: 'Подросток и закон', icon: Scale, description: 'Правовой уголок', color: 'bg-blue-600' },
   { label: 'Эксперимент. деятельность', icon: FlaskConical, description: 'Инновации', color: 'bg-purple-600' },
@@ -22,7 +23,6 @@ const links: QuickLinkItem[] = [
 
 const QuickLinks: React.FC = () => {
   return (
-    /* ОБНОВЛЕННЫЙ КОНТЕЙНЕР: w-full max-w-[1600px] */
     <div className="relative -mt-16 z-40 w-full max-w-[1600px] mx-auto px-4 md:px-8 mb-20">
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3 md:gap-4">
         {links.map((link) => (

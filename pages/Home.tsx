@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import Hero from '../components/Hero';
 import QuickLinks from '../components/QuickLinks';
+import ImportantSection from '../components/ImportantSection';
 import { MOCK_NEWS } from '../constants';
 import { Calendar, ArrowRight } from 'lucide-react';
 
@@ -14,9 +15,10 @@ const Home: React.FC = () => {
       <Hero />
       <QuickLinks />
 
-      {/* ОБНОВЛЕННЫЙ КОНТЕЙНЕР: w-full max-w-[1600px] */}
-      <div className="w-full max-w-[1600px] mx-auto px-4 md:px-8 pb-20">
+      {/* Основной блок новостей и баннер */}
+      <div className="w-full max-w-[1600px] mx-auto px-4 md:px-8 pb-12">
         
+        {/* Section Header */}
         <div className="flex justify-between items-end mb-10">
           <div>
             <h2 className="text-3xl font-display font-bold text-primary-900">Новости и события</h2>
@@ -28,7 +30,9 @@ const Home: React.FC = () => {
           </Link>
         </div>
 
+        {/* News Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Main News Item */}
           <Link to={`/news/${mainNews.id}`} className="lg:col-span-2 group cursor-pointer block">
             <div className="relative h-96 rounded-2xl overflow-hidden shadow-md">
               <img 
@@ -55,6 +59,7 @@ const Home: React.FC = () => {
             </div>
           </Link>
 
+          {/* Side News List */}
           <div className="space-y-6">
             {sideNews.map((news) => (
               <Link 
@@ -83,6 +88,7 @@ const Home: React.FC = () => {
           </div>
         </div>
 
+        {/* Year Theme Banner */}
         <div className="mt-20 bg-primary-900 rounded-2xl overflow-hidden relative shadow-2xl">
             <div className="absolute top-0 right-0 w-64 h-64 bg-accent-500 rounded-full blur-3xl opacity-20 -mr-32 -mt-32"></div>
             <div className="absolute bottom-0 left-0 w-64 h-64 bg-emerald-500 rounded-full blur-3xl opacity-20 -ml-32 -mb-32"></div>
@@ -90,10 +96,10 @@ const Home: React.FC = () => {
             <div className="relative flex flex-col md:flex-row items-center justify-between p-8 md:p-12">
               <div className="mb-6 md:mb-0 md:pr-8">
                 <h3 className="text-2xl md:text-4xl font-display font-bold text-white mb-4">
-                  Год качества 2024
+                  Год женщины 2026
                 </h3>
                 <p className="text-slate-300 max-w-xl">
-                  Мы ставим качество во главу угла: от материально-технической базы до уровня подготовки каждого специалиста.
+                  Мы ценим роль женщины в обществе, в сохранении традиций, укреплении семьи и воспитании подрастающего поколения.
                 </p>
               </div>
               <button className="flex-shrink-0 bg-white text-primary-900 hover:bg-slate-100 font-bold py-3 px-8 rounded-lg transition-colors">
@@ -102,6 +108,10 @@ const Home: React.FC = () => {
             </div>
         </div>
       </div>
+
+      {/* Секция "Это важно" теперь внизу */}
+      <ImportantSection />
+      
     </main>
   );
 };

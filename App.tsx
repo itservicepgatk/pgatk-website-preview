@@ -7,6 +7,9 @@ import NewsList from './pages/NewsList';
 import NewsDetail from './pages/NewsDetail';
 import OneWindow from './pages/OneWindow';
 import ServicesPage from './pages/ServicesPage';
+import Staff from './pages/Staff';
+import Specialties from './pages/Specialties';
+import AdministrativeProcedures from './pages/AdministrativeProcedures'; // <--- Импорт
 import { AccessibilityProvider } from './context/AccessibilityContext';
 
 const App: React.FC = () => {
@@ -21,6 +24,12 @@ const App: React.FC = () => {
             
             <Route path="odno-okno" element={<OneWindow />} />
             <Route path="odno-okno/uslugi" element={<ServicesPage />} />
+            
+            {/* Новый маршрут для Административных процедур */}
+            <Route path="odno-okno/admin-procedury" element={<AdministrativeProcedures />} />
+            
+            <Route path="kolledg/administraciy" element={<Staff />} />
+            <Route path="abiturientam" element={<Specialties />} />
             
             <Route path="*" element={<GenericPage />} />
           </Route>
